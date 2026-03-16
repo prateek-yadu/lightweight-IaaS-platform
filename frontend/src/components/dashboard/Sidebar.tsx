@@ -40,7 +40,7 @@ export default function Sidebar({ headerLinks, footerLinks, isOpen, setIsOpen }:
                 <ul className="mt-6 space-y-1">
                     {headerLinks.map((link, index) => (
                         <li key={index}>
-                            <Link to={link.href} className={`flex items-center gap-2 hover:text-accent hover:bg-accent/[6%] py-3 px-4 rounded text-sm ${fullURLPath === link.href ? "text-accent bg-accent/[6%]" : "text-secondary-foreground"}`}>
+                            <Link to={link.href} className={`flex items-center gap-2 hover:text-accent hover:bg-accent/[12%] py-3 px-4 rounded text-sm ${fullURLPath === link.href ? "text-accent bg-accent/[12%] font-medium" : "text-secondary-foreground"}`}>
                                 <link.icon className="size-5" />
                                 {link.name}
                             </Link>
