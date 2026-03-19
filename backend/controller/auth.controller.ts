@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import send from "../utils/response/index.js";
 import { pool } from '../db/config.js';
 import jwt from 'jsonwebtoken';
+import { isVailedEmail, isVailedPassword, isVailedUsername } from '../utils/validators/index.js';
 
 interface userData {
     name: string;
@@ -15,6 +16,12 @@ export const Login = async (req: Request, res: Response) => {
 
     try {
         const { email, password } = req.body;
+
+        const isEmailVailed = isVailedEmail(email);
+
+        if (!isEmailVailed) {
+            return send.badRequest(res, "Invailed credentials");
+        }
 
         // checks if user exists
         const [exists, fields]: any = await pool.query('SELECT id, name, profile_image, password FROM users WHERE email = ?', [email]);
@@ -62,6 +69,23 @@ export const Register = async (req: Request, res: Response) => {
 
     try {
         const { name, email, password } = req.body;
+
+        const isEmailVailed = isVailedEmail(email);
+        const isPasswordVailed = isVailedPassword(password);
+        const isUsernameVailed = isVailedUsername(name);
+
+        if (!isUsernameVailed) {
+            return send.badRequest(res, "Username should not be less than 4 characters");
+        }
+
+        if (!isEmailVailed) {
+            return send.badRequest(res, "Please enter vailed email");
+        }
+
+        if (!isPasswordVailed) {
+            return send.badRequest(res, "Password length must be atleast 8 characters");
+        }
+
         const saltRounds: number = typeof (process.env.SALTROUNDS) == "string" && parseInt(process.env.SALTROUNDS) || 10;// adds salt rounds
         // checks if user exists 
         const [exists, fields]: any = await pool.query('SELECT email FROM users WHERE email = ?', [email]);
