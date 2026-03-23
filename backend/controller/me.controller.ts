@@ -83,3 +83,38 @@ export const subscribedPlans = async (req: customRequest, res: Response) => {
         send.internalError(res);
     }
 };
+
+export const RenewSubscribedPlan = async (req: Request, res: Response) => {
+
+    try {
+        const id = req.params.id;
+
+        const [plan]: any = await pool.query("SELECT id, expires_at FROM user_plans WHERE id=?", [id]);
+
+        const expires_at = plan[0]?.expires_at;
+
+        // check if plan exists
+        if (plan.length > 0) {
+
+            // chekck if plan is expired 
+            const isPlanExpired: boolean = isExpired(expires_at);
+
+            if (isPlanExpired) {
+                // add 28 more from current date
+                const [update_plan] = await pool.query("UPDATE user_plans SET purchased_at=current_timestamp(), expires_at=(SELECT DATE_ADD((SELECT NOW()), INTERVAL ? DAY)) WHERE id=?", [28, id]); // 28 days of plan renew extension is hard coded
+
+                send.ok(res, "Plan renewed successfully");
+            } else {
+                // extend 28 days from expiration date
+                const [update_plan] = await pool.query("UPDATE user_plans SET expires_at=(SELECT DATE_ADD(?, INTERVAL ? DAY)) WHERE id=?;", [expires_at, 28, id]);
+
+                send.ok(res, "Plan renewed successfully");
+            }
+        } else {
+            send.notFound(res, "Subscription not found");
+        }
+
+    } catch (error) {
+        send.internalError(res);
+    }
+};
