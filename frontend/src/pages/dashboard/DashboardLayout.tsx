@@ -1,14 +1,18 @@
 import { Bell, CircleQuestionMark, CircleUser, CreditCard, Home, LanguagesIcon, LayoutDashboard, LogOut, Menu, Server, Store } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../app/store";
 import Sidebar from "../../components/dashboard/Sidebar";
+import { toast } from "sonner";
+import { updateAuthState } from "../../app/features/auth/AuthHandler";
 
 export default function DashboardLayout() {
 
   // gets user info
   const user = useSelector((state: RootState) => state.AuthState);
+
+  const dispatch = useDispatch();
 
   // genrates user fallback text 
   const arr = user.name?.split(" ");
@@ -82,6 +86,31 @@ export default function DashboardLayout() {
     setIsSidebarOpen(true);
   };
 
+  const logoutUser = async () => {
+    const res = await (await fetch('/api/v1/auth/logout', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })).json();
+
+    if (res.status == 200) {
+
+      // clears user detail when user logs out 
+      dispatch(
+        updateAuthState({
+          isAuthenticated: false,
+          name: undefined,
+          email: undefined,
+          imageUrl: undefined
+        })
+      );
+      toast.success(res.message);
+    } else {
+      toast.error(res.message);
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* sidebar */}
@@ -138,10 +167,12 @@ export default function DashboardLayout() {
                 <ul className="p-2">
                   {accountLinks.map((link, index) => (
                     <li key={index}>
-                      <Link to={link.href} className={`flex items-center gap-2 py-3  p-4 text-sm rounded ${link.name == "Logout" ? "hover:bg-red-100 text-red-500" : "text-primary hover:bg-accent/[6%]"}`}>
+                      <button className={`flex w-full items-center gap-2 py-3  p-4 text-sm rounded ${link.name == "Logout" ? "hover:bg-red-100 text-red-500" : "text-primary hover:bg-accent/[6%]"}`} onClick={() => {
+                        logoutUser();
+                      }}>
                         <link.icon className="size-5" />
                         {link.name}
-                      </Link>
+                      </button>
                     </li>
                   ))}
                 </ul>
