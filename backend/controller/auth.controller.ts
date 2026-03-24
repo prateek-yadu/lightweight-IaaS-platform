@@ -65,6 +65,21 @@ export const Login = async (req: Request, res: Response) => {
     }
 };
 
+export const Logout = async (req: Request, res: Response) => {
+
+    try {
+        const cookie: string | undefined = req.cookies.token;
+        if (cookie) {
+            res.clearCookie("token");
+            send.ok(res, "User logged out successfully");
+        } else {
+            send.ok(res, "User already logged out");
+        }
+    } catch (error) {
+        send.internalError(res);
+    }
+};
+
 export const Register = async (req: Request, res: Response) => {
 
     try {
