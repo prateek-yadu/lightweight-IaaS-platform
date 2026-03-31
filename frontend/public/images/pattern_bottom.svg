@@ -1,0 +1,62 @@
+<svg width="1440" height="70" viewBox="0 0 1440 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_37_893)">
+<mask id="mask0_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="100" y="-260" width="1240" height="330">
+<path d="M1340 70H100V-260H1340V70Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_37_893)">
+<mask id="mask1_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="100" y="-240" width="20" height="290">
+<path d="M100 50H120V-240H100V50Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_37_893)">
+<path d="M100 49H120V51H100V49ZM120 -239H100V-241H120V-239Z" fill="#E4E7EB"/>
+</g>
+<mask id="mask2_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="120" y="-240" width="600" height="290">
+<path d="M120 50H720V-240H120V50Z" fill="white"/>
+</mask>
+<g mask="url(#mask2_37_893)">
+<path d="M120 49H720V51H120V49ZM720 -239H120V-241H720V-239Z" fill="#E4E7EB"/>
+</g>
+<mask id="mask3_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="120" y="-260" width="600" height="330">
+<path d="M120 70H720V-260H120V70Z" fill="white"/>
+</mask>
+<g mask="url(#mask3_37_893)">
+<path d="M719 70V-260H721V70H719ZM121 -260V70H119V-260H121Z" fill="#E4E7EB"/>
+</g>
+<path d="M720 70H1320V-260H720V70Z" fill="white"/>
+<mask id="mask4_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="720" y="-240" width="600" height="290">
+<path d="M720 50H1320V-240H720V50Z" fill="white"/>
+</mask>
+<g mask="url(#mask4_37_893)">
+<path d="M720 50H1320V-240H720V50Z" fill="white"/>
+<path d="M720 10L1320 9.9999" stroke="#E4E7EB"/>
+<path d="M960 10V50" stroke="#E4E7EB"/>
+<path d="M840 10V50" stroke="#E4E7EB"/>
+<path d="M1080 10V50" stroke="#E4E7EB"/>
+<path d="M1200 10V50" stroke="#E4E7EB"/>
+</g>
+<mask id="mask5_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="720" y="-240" width="600" height="290">
+<path d="M720 50H1320V-240H720V50Z" fill="white"/>
+</mask>
+<g mask="url(#mask5_37_893)">
+<path d="M720 49H1320V51H720V49ZM1320 -239H720V-241H1320V-239Z" fill="#E4E7EB"/>
+</g>
+<mask id="mask6_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="720" y="-260" width="600" height="330">
+<path d="M720 70H1320V-260H720V70Z" fill="white"/>
+</mask>
+<g mask="url(#mask6_37_893)">
+<path d="M1319 70V-260H1321V70H1319Z" fill="#E4E7EB"/>
+</g>
+<mask id="mask7_37_893" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1320" y="-240" width="20" height="290">
+<path d="M1320 50H1340V-240H1320V50Z" fill="white"/>
+</mask>
+<g mask="url(#mask7_37_893)">
+<path d="M1320 49H1340V51H1320V49ZM1340 -239H1320V-241H1340V-239Z" fill="#E4E7EB"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_37_893">
+<rect width="1440" height="70" fill="white" transform="matrix(1 0 0 -1 0 70)"/>
+</clipPath>
+</defs>
+</svg>

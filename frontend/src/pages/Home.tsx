@@ -50,6 +50,25 @@ function Home() {
     alt: "cocacola"
   },];
 
+  const complaiants = [
+    {
+      url: "/images/complaints/gdpr.png",
+      alt: "gdpr"
+    },
+    {
+      url: "/images/complaints/ccpa.png",
+      alt: "ccpa"
+    },
+    {
+      url: "/images/complaints/iso-1.png",
+      alt: "iso-9001"
+    },
+    {
+      url: "/images/complaints/iso-2.png",
+      alt: "iso-27001"
+    },
+  ];
+
   return (
     <>
       {/* Navbar */}
@@ -226,6 +245,57 @@ function Home() {
             </div>
           </div>
         </section>
+
+
+        {/* complaints section */}
+        <section className="pb-[80px] lg:pb-[181px] mt-[100px] relative">
+          <div className="container px-4 m-auto">
+
+            <div className="flex flex-row">
+
+              {/* Left Content */}
+              <div className="hidden lg:flex flex-col opacity-0">
+                <div className="w-12" />
+              </div>
+
+              {/* Right Content */}
+              <div className="flex-1">
+
+                <div className="grid grid-rows-2 gap-4 lg:grid-rows-1 lg:grid-cols-2 lg:ml-14">
+                  {/* Left */}
+                  <div className="">
+                    <h3 className="font-bold text-2xl md:text-3xl lg:text-[38px]">Scale with <span className="text-[#727B84]">security</span></h3>
+                    <p className="text-[#31373D] md:text-xl font-medium mt-0.5 md:mt-1.5 lg:pr-8 xl:pr-24 2xl:pr-44">Arctic is audited and certified by industry leading third-party standards</p>
+                    <div className="flex items-center flex-col gap-3 md:flex-row justify-start text-sm md:text-base mt-6">
+                      <button className="text-white bg-accent px-4 md:px-[18px] py-2 md:py-[13px] ring-1 ring-[#505967] rounded-xl w-full md:w-fit">Get started with Arctic</button>
+                      <button className="text-[#31373D] bg-white px-4 md:px-[18px] py-2 md:py-[13px] ring-1 ring-[#CDD3DB] rounded-xl w-full md:w-fit">Talk to sales</button>
+                    </div>
+                  </div>
+
+                  {/* Right */}
+                  <div className="grid grid-cols-2 items-center md:grid-cols-4 lg:mr-16 xl:mr-0 gap-4">
+                    {complaiants.map((complaiant) => (
+                      <img src={complaiant.url} alt={complaiant.alt} className="h-12 m-auto" />
+                    ))}
+                  </div>
+
+                  {/* Absolutes */}
+                  <div className="hidden lg:flex lg:absolute left-0 xl:right-0 xl:w-full -top-24">
+                    <img src="/images/pattern_top.svg" alt="pattern_bottom" className="w-full" />
+                  </div>
+                  <div className="hidden lg:flex lg:absolute left-0 xl:right-0 xl:w-full bottom-20 overflow-hidden">
+                    <img src="/images/pattern_bottom.svg" alt="pattern_top" className="w-full" />
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
       </main>
     </>
   );
