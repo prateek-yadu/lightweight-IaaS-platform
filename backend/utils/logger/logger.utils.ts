@@ -8,11 +8,10 @@ interface log {
     userId?: string;
     ip: string | undefined;
     route: string;
-
 }
 
 export const logger = {
-    async log(filename: "auth" | "billing" | "instance", log: log) {
+    async log(filename: "auth" | "billing" | "instance" | "profile", log: log) {
 
         log.timestamp = Date.now();
 

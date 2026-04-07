@@ -2,6 +2,7 @@ import { pool } from "../db/config.js";
 import send from "../utils/response/response.js";
 import { Request, Response } from "express";
 import { isExpired } from "../utils/validators/planValidators.js";
+import { logger } from "../utils/logger/logger.utils.js";
 
 interface customRequest extends Request {
     id?: string;
@@ -22,6 +23,7 @@ export const me = async (req: customRequest, res: Response) => {
             send.notFound(res, "User Not Found");
         }
     } catch (error) {
+        logger.log("profile", { ip: req.ip, message: `Internal error`, type: "error", route: "GET /me" });
         send.internalError(res);
     }
 };
@@ -80,11 +82,12 @@ export const subscribedPlans = async (req: customRequest, res: Response) => {
             send.notFound(res, "You are not subscribed to any plan.");
         }
     } catch (error) {
+        logger.log("profile", { ip: req.ip, message: `Internal error`, type: "error", route: "GET /me/plans" });
         send.internalError(res);
     }
 };
 
-export const RenewSubscribedPlan = async (req: Request, res: Response) => {
+export const RenewSubscribedPlan = async (req: customRequest, res: Response) => {
 
     try {
         const id = req.params.id;
@@ -103,18 +106,25 @@ export const RenewSubscribedPlan = async (req: Request, res: Response) => {
                 // add 28 more from current date
                 const [update_plan] = await pool.query("UPDATE user_plans SET purchased_at=current_timestamp(), expires_at=(SELECT DATE_ADD((SELECT NOW()), INTERVAL ? DAY)) WHERE id=?", [28, id]); // 28 days of plan renew extension is hard coded
 
+                logger.log("billing", { ip: req.ip, message: `Plan renewed successfully`, type: "success", route: "POST /me/plans/:id/renew", userId: req.id });
                 send.ok(res, "Plan renewed successfully");
             } else {
                 // extend 28 days from expiration date
                 const [update_plan] = await pool.query("UPDATE user_plans SET expires_at=(SELECT DATE_ADD(?, INTERVAL ? DAY)) WHERE id=?;", [expires_at, 28, id]);
 
+
+                logger.log("billing", { ip: req.ip, message: `Plan renewed successfully`, type: "success", route: "POST /me/plans/:id/renew", userId: req.id });
+
                 send.ok(res, "Plan renewed successfully");
             }
         } else {
+
+            logger.log("billing", { ip: req.ip, message: `Trying to renew non-existing plan`, type: "error", route: "POST /me/plans/:id/renew", userId: req.id });
             send.notFound(res, "Subscription not found");
         }
 
     } catch (error) {
+        logger.log("profile", { ip: req.ip, message: `Internal error`, type: "error", route: "POST /me/plans/:id/renew" });
         send.internalError(res);
     }
 };
