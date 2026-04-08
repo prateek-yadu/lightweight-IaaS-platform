@@ -3,6 +3,7 @@ import send from "../utils/response/response.js";
 import { pool } from "../db/config.js";
 import { v4 as uuidv4 } from 'uuid';
 import { validateVMName } from "../utils/validators/index.js";
+import { logger } from "../utils/logger/logger.utils.js";
 
 
 // TODO: Put every thing in try catch block
@@ -66,6 +67,9 @@ export const allVMs = async (req: customRequest, res: Response) => {
       send.notFound(res, "No VM Found.");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "GET /vms" });
+
     send.internalError(res);
   }
 };
@@ -103,6 +107,9 @@ export const getVM = async (req: customRequest, res: Response) => {
       send.notFound(res, "VM not found by this name.");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "GET /vms/:vmId" });
+
     send.internalError(res);
   }
 };
@@ -115,10 +122,17 @@ export const createVM = async (req: customRequest, res: Response) => {
     const isVailedVMName = validateVMName(vmName); // checks if VM Name is vailed (eg, db01.prateek.inc, staging-server-prateek-labs)or not 
 
     if (!isVailedVMName) {
+
+      logger.log("instance", { ip: req.ip, message: `[validator]: Failed vm name check`, type: "error", route: "POST /vms", userId: req.id });
+
       send.badRequest(res, "Enter vailed VM Name"); // sends error is VM name is not vailed
     } else {
 
-      if (rootPassword == undefined || rootPassword.length <= 0) { // cheks root password exists 
+      if (rootPassword == undefined || rootPassword.length <= 0) {
+
+        logger.log("instance", { ip: req.ip, message: `[validator]: Failed vm password check`, type: "error", route: "POST /vms", userId: req.id });
+
+        // cheks root password exists 
         send.badRequest(res, "Enter Root Password");
         return;
       }
@@ -137,11 +151,17 @@ export const createVM = async (req: customRequest, res: Response) => {
 
         // check if plan is expired
         if (expired) {
+
+          logger.log("instance", { ip: req.ip, message: `User trying to create VM with expired plan`, type: "error", route: "POST /vms", userId: req.id });
+
           send.forbidden(res, "Plan Expired.");
         } else {
 
           // check if plan in use
           if (inUse) {
+
+            logger.log("instance", { ip: req.ip, message: `User trying to create VM with plan already in use`, type: "error", route: "POST /vms", userId: req.id });
+
             send.forbidden(res, "Instance is already initialized with this plan.");
           } else {
             // generates VM's ID (stored as name in LXC/LXD and ID in DB)
@@ -152,6 +172,9 @@ export const createVM = async (req: customRequest, res: Response) => {
 
             // sends conflict error if vm name is already thier 
             if (vmExists.length != 0) {
+
+              logger.log("instance", { ip: req.ip, message: `VM already initialized with given name`, type: "error", route: "POST /vms", userId: req.id });
+
               send.conflict(res, "VM already exists with this name");
               return;
             }
@@ -164,6 +187,9 @@ export const createVM = async (req: customRequest, res: Response) => {
 
             // cheks if IP exists to assign to VM
             if (assignableIP == undefined) {
+
+              logger.log("instance", { ip: req.ip, message: `Failed to create VM due to no assignable IP available`, type: "error", route: "POST /vms" });
+
               send.internalError(res); // No assignable IP Found
             } else {
 
@@ -196,8 +222,13 @@ export const createVM = async (req: customRequest, res: Response) => {
 
                 const [instance, instanceFields]: any = await pool.query('INSERT INTO instances (id, name, description, status, image_id, address_id, user_id, user_plan_id, region_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [vmID, vmName, vmDescription, "Provisioning", 1, ip[0].id, userId, planId, 1]);
 
+                logger.log("instance", { ip: req.ip, message: `VM created successfully`, type: "success", route: "POST /vms", userId: req.id });
+
                 send.ok(res, "VM Created Successfully");
               } else {
+
+                logger.log("instance", { ip: req.ip, message: `VM creation failed`, type: "error", route: "POST /vms", userId: req.id });
+
                 // error coz VM creation might have failed
                 send.internalError(res);
               }
@@ -205,10 +236,16 @@ export const createVM = async (req: customRequest, res: Response) => {
           }
         }
       } else {
+
+        logger.log("instance", { ip: req.ip, message: `VM creation failed because plan not vailed`, type: "error", route: "POST /vms", userId: req.id });
+
         send.notFound(res, "Plan does not exist.");
       }
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "POST /vms" });
+
     send.internalError(res);
   }
 };
@@ -234,6 +271,9 @@ export const startVM = async (req: customRequest, res: Response) => {
 
       // cheks if plan is expired
       if (expired) {
+
+        logger.log("instance", { ip: req.ip, message: `Can not perform any action plan expired`, type: "error", route: "PUT /vms/:vmId/start", userId: req.id, vmId: vmId });
+
         send.forbidden(res, "Can not perform any action plan expired.");
       } else {
 
@@ -253,6 +293,9 @@ export const startVM = async (req: customRequest, res: Response) => {
         }
 
         if (VMstatusInLXD === "Running") {
+
+          logger.log("instance", { ip: req.ip, message: `Can not start, VM already running`, type: "info", route: "PUT /vms/:vmId/start", userId: req.id, vmId: vmId });
+
           send.badRequest(res, "VM is already Running.");
         } else {
           const vmStartReq: any = await (await fetch(`${process.env.LXD_AGENT_SERVER}/api/v1/instance/${vmId}/start`, {
@@ -263,16 +306,27 @@ export const startVM = async (req: customRequest, res: Response) => {
             // update state in DB
             const [updateState]: any = await pool.query('UPDATE instances SET status=? WHERE id=?', ["Running", vmId]);
 
+            logger.log("instance", { ip: req.ip, message: `VM Started`, type: "info", route: "PUT /vms/:vmId/start", userId: req.id, vmId: vmId });
+
             send.ok(res, "VM started successfully");
           } else {
+
+            logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "PUT /vms/:vmId/start" });
+            
             send.internalError(res);
           }
         }
       }
     } else {
+
+      logger.log("instance", { ip: req.ip, message: `No VM Found by the name ${vmName}`, type: "info", route: "PUT /vms/:vmId/start", userId: req.id });
+
       send.notFound(res, "VM not found");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "POST /vms" });
+
     send.internalError(res);
   }
 };
@@ -298,6 +352,9 @@ export const stoptVM = async (req: customRequest, res: Response) => {
 
       // cheks if plan is expired
       if (expired) {
+
+        logger.log("instance", { ip: req.ip, message: `Can not perform any action plan expired`, type: "error", route: "PUT /vms/:vmId/stop", userId: req.id, vmId: vmId });
+
         send.forbidden(res, "Can not perform any action plan expired.");
       } else {
 
@@ -317,6 +374,9 @@ export const stoptVM = async (req: customRequest, res: Response) => {
         }
 
         if (VMstatusInLXD === "Stopped") {
+
+          logger.log("instance", { ip: req.ip, message: `Can not stop VM, already Stopped`, type: "info", route: "PUT /vms/:vmId/stop", userId: req.id, vmId: vmId });
+
           send.badRequest(res, "VM is already Stopped.");
         } else {
           const vmStopReq: any = await (await fetch(`${process.env.LXD_AGENT_SERVER}/api/v1/instance/${vmId}/stop`, {
@@ -327,16 +387,27 @@ export const stoptVM = async (req: customRequest, res: Response) => {
             // update state in DB
             const [updateState]: any = await pool.query('UPDATE instances SET status=? WHERE id=?', ["Stopped", vmId]);
 
+            logger.log("instance", { ip: req.ip, message: `VM Stopped successfully`, type: "info", route: "PUT /vms/:vmId/stop", userId: req.id, vmId: vmId });
+
             send.ok(res, "VM Stopped successfully.");
           } else {
+
+            logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "PUT /vms/:vmId/stop" });
+
             send.internalError(res);
           }
         }
       }
     } else {
+
+      logger.log("instance", { ip: req.ip, message: `Vm not found by name ${vmName}`, type: "info", route: "PUT /vms/:vmId/stop", userId: req.id });
+
       send.notFound(res, "VM not found");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "PUT /vms/:vmId/stop" });
+
     send.internalError(res);
   }
 };
@@ -361,9 +432,15 @@ export const restartVM = async (req: customRequest, res: Response) => {
 
       // cheks if plan is expired
       if (expired) {
+
+        logger.log("instance", { ip: req.ip, message: `Can not perform any action plan expired`, type: "error", route: "PUT /vms/:vmId/restart", userId: req.id, vmId: vmId });
+
         send.forbidden(res, "Can not perform any action plan expired.");
       } else {
         if (vmStatus === "Stopped") {
+
+          logger.log("instance", { ip: req.ip, message: `Cannot restart VM, VM not running`, type: "info", route: "PUT /vms/:vmId/restart", userId: req.id, vmId: vmId });
+
           send.badRequest(res, "VM is not Running.");
         } else {
           const vmRestartReq: any = await (await fetch(`${process.env.LXD_AGENT_SERVER}/api/v1/instance/${vmId}/restart`, {
@@ -371,16 +448,28 @@ export const restartVM = async (req: customRequest, res: Response) => {
           })).json();
 
           if (vmRestartReq.status === 200) {
+
+            logger.log("instance", { ip: req.ip, message: `Restarting VM`, type: "info", route: "PUT /vms/:vmId/restart", userId: req.id, vmId: vmId });
+
             send.ok(res, "VM is restarting.");
           } else {
+
+            logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "PUT /vms/:vmId/restart" });
+
             send.internalError(res);
           }
         }
       }
     } else {
+
+      logger.log("instance", { ip: req.ip, message: `VM not found by the name ${vmName}`, type: "error", route: "PUT /vms/:vmId/restart", userId: req.id });
+
       send.notFound(res, "VM not found");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "PUT /vms/:vmId/restart" });
+
     send.internalError(res);
   }
 };
@@ -407,6 +496,9 @@ export const destroyVM = async (req: customRequest, res: Response) => {
 
       // cheks if plan is expired
       if (expired) {
+
+        logger.log("instance", { ip: req.ip, message: `Can not perform any action plan expired.`, type: "error", route: "DELETE /vms/:vmId", userId: req.id, vmId: vmId });
+
         send.forbidden(res, "Can not perform any action plan expired.");
       } else {
 
@@ -426,6 +518,9 @@ export const destroyVM = async (req: customRequest, res: Response) => {
         }
 
         if (VMstatusInLXD !== "Stopped") {
+
+          logger.log("instance", { ip: req.ip, message: `Cannot destroy VM while running, Stop VM`, type: "info", route: "DELETE /vms/:vmId", userId: req.id, vmId: vmId });
+
           send.badRequest(res, "Stop the VM first");
         } else {
 
@@ -448,17 +543,28 @@ export const destroyVM = async (req: customRequest, res: Response) => {
             // release reserved IP
             const [releaseIP]: any = await pool.query('UPDATE ip_addresses SET in_use=0 WHERE id=?', [vmIPId]);
 
+            logger.log("instance", { ip: req.ip, message: `VM deleted`, type: "info", route: "DELETE /vms/:vmId", userId: req.id, vmId: vmId });
+
             send.ok(res, "VM deleted successfully.");
           } else {
+
+            logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "DELETE /vms/:vmId" });
+
             send.internalError(res);
           }
         }
       }
 
     } else {
+
+      logger.log("instance", { ip: req.ip, message: `VM not found by the name ${vmName}`, type: "error", route: "DELETE /vms/:vmId" });
+
       send.notFound(res, "VM not found");
     }
   } catch (error) {
+
+    logger.log("instance", { ip: req.ip, message: `Internal error`, type: "error", route: "DELETE /vms/:vmId" });
+
     send.internalError(res);
   }
 
