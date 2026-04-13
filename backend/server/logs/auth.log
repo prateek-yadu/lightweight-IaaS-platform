@@ -1,0 +1,7 @@
+{"ip":"::ffff:127.0.0.1","message":"Internal Error","type":"error","route":"POST /login","timestamp":1775899067377}
+{"ip":"::ffff:127.0.0.1","message":"Internal Error","type":"error","route":"POST /login","timestamp":1775899089520}
+{"ip":"::ffff:127.0.0.1","message":"Successfull user login","type":"success","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","route":"POST /login","timestamp":1775899112646}
+{"ip":"::ffff:127.0.0.1","message":"Successfull user login","type":"success","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","route":"POST /login","timestamp":1775899132706}
+{"ip":"::ffff:127.0.0.1","message":"Successfull user login","type":"success","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","route":"POST /login","timestamp":1775908588281}
+{"ip":"::ffff:127.0.0.1","message":"Internal Error","type":"error","route":"POST /login","timestamp":1776091319487}
+{"ip":"::ffff:127.0.0.1","message":"Successfull user login","type":"success","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","route":"POST /login","timestamp":1776092013546}

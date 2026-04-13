@@ -1,0 +1,17 @@
+{"ip":"::ffff:127.0.0.1","message":"Internal error","type":"error","route":"GET /vms","timestamp":1775899172538}
+{"ip":"::ffff:127.0.0.1","message":"Internal error","type":"error","route":"GET /vms","timestamp":1775899181426}
+{"ip":"::ffff:127.0.0.1","message":"[validator]: Failed vm password check","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775899295930}
+{"ip":"::ffff:127.0.0.1","message":"VM creation failed because plan not vailed","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775899394166}
+{"ip":"::ffff:127.0.0.1","message":"VM created successfully","type":"success","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775899476981}
+{"ip":"::ffff:127.0.0.1","message":"VM Stopped successfully","type":"info","route":"PUT /vms/:vmId/stop","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","vmId":"vm-fb9b303f-39a2-4b06-8971-9e39e49055cb","timestamp":1775899525647}
+{"ip":"::ffff:127.0.0.1","message":"VM deleted","type":"info","route":"DELETE /vms/:vmId","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","vmId":"vm-fb9b303f-39a2-4b06-8971-9e39e49055cb","timestamp":1775899547849}
+{"ip":"::ffff:127.0.0.1","message":"VM creation failed because plan not vailed","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775909515777}
+{"ip":"::ffff:127.0.0.1","message":"VM creation failed because plan not vailed","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775909527350}
+{"ip":"::ffff:127.0.0.1","message":"VM created successfully","type":"success","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775910961145}
+{"ip":"::ffff:127.0.0.1","message":"Internal error","type":"error","route":"POST /vms","timestamp":1775910961145}
+{"ip":"::ffff:127.0.0.1","message":"User trying to create VM with plan already in use","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775910972222}
+{"ip":"::ffff:127.0.0.1","message":"User trying to create VM with plan already in use","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775910999109}
+{"ip":"::ffff:127.0.0.1","message":"User trying to create VM with plan already in use","type":"error","route":"POST /vms","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","timestamp":1775910999926}
+{"ip":"::ffff:127.0.0.1","message":"Cannot destroy VM while running, Stop VM","type":"info","route":"DELETE /vms/:vmId","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","vmId":"vm-0e847be6-2268-47a6-89e0-9dfb4cfe4717","timestamp":1775911007232}
+{"ip":"::ffff:127.0.0.1","message":"VM Stopped successfully","type":"info","route":"PUT /vms/:vmId/stop","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","vmId":"vm-0e847be6-2268-47a6-89e0-9dfb4cfe4717","timestamp":1775911019002}
+{"ip":"::ffff:127.0.0.1","message":"VM deleted","type":"info","route":"DELETE /vms/:vmId","userId":"353270c0-1f83-461e-a594-0ac3dc10fcf0","vmId":"vm-0e847be6-2268-47a6-89e0-9dfb4cfe4717","timestamp":1775911022877}
