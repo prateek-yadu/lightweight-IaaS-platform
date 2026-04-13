@@ -13,6 +13,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
+    "bullmq": "^5.73.4",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
