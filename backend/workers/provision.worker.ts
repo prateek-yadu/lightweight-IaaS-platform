@@ -1,10 +1,11 @@
 import { config } from "dotenv";
 import { Job, Worker } from "bullmq";
-import { redisConnection } from "../lib/redis";
+// @ts-ignore
+import { redisConnection } from "../lib/redis.ts";
 
 config({ path: "../.env" });
 
-const worker = new Worker(process.env.REDIS_QUEUE_NAME || '', async (job: Job) => {
+const worker = new Worker(process.env.REDIS_PROVISIONING_QUEUE || 'provision-instance', async (job: Job) => {
 
     try {
 
@@ -17,7 +18,7 @@ const worker = new Worker(process.env.REDIS_QUEUE_NAME || '', async (job: Job) =
             body: JSON.stringify(job.data)
         })).json();
 
-        if (createInstance.status !== 100) {
+        if (createInstance.status !== 200) {
             throw new Error("Instance creation failed");
         }
 
