@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, CopyIcon, Ellipsis, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { socket } from "../../../socket";
 
 interface UserPlan {
     id: string;
@@ -16,6 +17,7 @@ interface UserPlan {
 
 
 interface VM {
+    id: string;
     name: string;
     description?: string;
     status: string;
@@ -130,6 +132,40 @@ export default function VPS() {
     useEffect(() => {
         getSubscribedPlans();
         getVMs();
+
+        // establish socket connection
+        socket.on('connect', () => { });
+        socket.on('disconnect', () => { });
+
+        socket.on('instance:lifecycle:events', (msg) => {
+            const data = JSON.parse(msg)
+            let state: string;
+            switch (data.operation) {
+                case "instance-started":
+                    state = "running"
+                    break;
+
+                case "instance-shutdown":
+                case "instance-stopped":
+                    state = "stopped"
+                    break;
+            }
+            setVMs(prev => {
+                return prev.map((vm: VM) =>
+                    vm.id === data.instance ? { ...vm, status: state } : vm
+                );
+            });
+
+        });
+
+        return () => {
+            socket.off('connect', () => { });
+            socket.off('disconnect', () => { });
+            socket.off('instance:lifecycle:events', () => { });
+        };
+
+
+
     }, []);
 
     return (
