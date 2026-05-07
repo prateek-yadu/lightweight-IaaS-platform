@@ -120,7 +120,6 @@ export const shallowHealth = async (req: Request, res: Response) => {
 };
 
 export const deepHealth = async (req: Request, res: Response) => {
-
   try {
     let overAllhealth: OverallHealth;
 
@@ -161,6 +160,43 @@ export const deepHealth = async (req: Request, res: Response) => {
     };
     res.json(health);
   } catch (error) {
-    res.status(404).json({ message: "something went wrong" });
+    let overAllhealth: OverallHealth;
+
+    const mysqlHealth = await checkMYSQLHealth();
+    const redisHealth = await checkRedisHealth();
+    const lxdAgentHealth = await checkLXDAgentHealth();
+    const eventWorkerHealth = await checkWorkerHealth("event-worker");
+    const provisionWorkerHealth = await checkWorkerHealth("provision-worker");
+    const lifecycleWorkerHealth = await checkWorkerHealth("lifecycle-worker");
+
+    if (
+      mysqlHealth === "OK" &&
+      redisHealth === "OK" &&
+      lxdAgentHealth === "OK" &&
+      eventWorkerHealth === "OK" &&
+      provisionWorkerHealth === "OK" &&
+      lifecycleWorkerHealth === "OK"
+    ) {
+      overAllhealth = "Stable";
+    } else {
+      overAllhealth = "Critical";
+    }
+
+    const health = {
+      health: overAllhealth,
+      services: {
+        backend: "OK",
+        lxd_agent: lxdAgentHealth,
+        mysql: mysqlHealth,
+        redis: redisHealth,
+        event_worker: eventWorkerHealth,
+        provisioning_worker: provisionWorkerHealth,
+        lifecycle_worker: lifecycleWorkerHealth,
+        sync_worker: "TODO WORKER",
+      },
+      uptime: process.uptime(), // sends uptime in seconds
+      lastCheck: Date.now(),
+    };
+    res.json(health);
   }
 };
