@@ -93,24 +93,38 @@ const sendToDeleteQueue = async (instanceId: string) => {
   }
 };
 
-const deleteInstance = async (instanceId: string) => {
-  try {
-    // call lxd agent and remove instance
-    const instanceDeletetionReq: any = await (
-      await fetch(`${process.env.LXD_AGENT_SERVER}/api/v1/instance`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: instanceId }),
-      })
-    ).json();
+const stopInstance = async (instanceId: string) => {
+  const instanceOperationReq: any = await (
+    await fetch(
+      `${process.env.LXD_AGENT_SERVER}/api/v1/instance/${instanceId}/stop`,
+      { method: "PUT" },
+    )
+  ).json();
+};
 
-    if (instanceDeletetionReq.status !== 200) {
-      throw new Error("LXD can not create operation");
+const deleteInstance = async (instanceId: string, instanceStatus: string) => {
+  try {
+    if (instanceStatus === "stopped") {
+      // call lxd agent and remove instance
+      const instanceDeletetionReq: any = await (
+        await fetch(`${process.env.LXD_AGENT_SERVER}/api/v1/instance`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: instanceId }),
+        })
+      ).json();
+
+      if (instanceDeletetionReq.status !== 200) {
+        throw new Error("LXD can not create operation");
+      } else {
+        // logo deleted instance
+        console.log(`deleted instance: ${instanceId}`);
+      }
     } else {
-      // logo deleted instance
-      console.log(`deleted instance: ${instanceId}`);
+      // stop instance -> will be deleted next time worker runs
+      await stopInstance(instanceId);
     }
   } catch (error: any) {
     // log error
@@ -151,7 +165,7 @@ const removeGhotInstnace = async (
 ) => {
   for (const instance of instanceRecordFromServer) {
     if (!instanceRecordFromDB.get(instance[0])) {
-      await deleteInstance(instance[0]);
+      await deleteInstance(instance[0], instance[1]);
     }
   }
 };
@@ -182,7 +196,12 @@ const sendHealthStatus = async () => {
     status: "OK",
     lastCheck: Date.now(),
   };
-  await redis.set("health:workers:sync-worker", JSON.stringify(payload), "EX", 25);
+  await redis.set(
+    "health:workers:sync-worker",
+    JSON.stringify(payload),
+    "EX",
+    25,
+  );
 };
 
 while (true) {
