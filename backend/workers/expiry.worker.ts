@@ -101,7 +101,6 @@ const removeExpiredInstance = async () => {
       }
     }
   }
-  console.log("Expired instance", list);
 };
 
 const expiryWorker = async () => {
