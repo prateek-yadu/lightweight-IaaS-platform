@@ -11,7 +11,8 @@
     "event-worker": "node --watch workers/event.worker.ts",
     "lifecycle-worker": "node --watch workers/lifecycle.worker.ts",
     "provision-worker": "node --watch workers/provision.worker.ts",
-    "sync-worker": "tsx watch workers/sync.worker.ts"
+    "sync-worker": "tsx watch workers/sync.worker.ts",
+    "expiry-worker": "tsx watch workers/expiry.worker.ts"
   },
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
