@@ -217,5 +217,5 @@ const sendHealthStatus = async () => {
 while (true) {
   await sendHealthStatus();
   await syncWorker();
-  await sleep(1);
+  await sleep(10);
 }
