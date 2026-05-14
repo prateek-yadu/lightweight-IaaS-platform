@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import { store } from "../app/store";
 import Pricing from "../pages/Pricing";
 import Billing from "../pages/dashboard/billings/Billings";
+import MarketPlace from "../pages/dashboard/marketplace/MarketPlace";
 
 
 export default function AppRoutes() {
@@ -32,7 +33,8 @@ export default function AppRoutes() {
                             path: "dashboard", Component: DashboardLayout, children: [
                                 { index: true, Component: Dashboard },
                                 { path: "vps", Component: VPS },
-                                { path: "billing", Component: Billing }
+                                { path: "billing", Component: Billing },
+                                { path: "market", Component: MarketPlace }
                             ]
                         }
                     ]
