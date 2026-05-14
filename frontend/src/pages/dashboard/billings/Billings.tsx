@@ -80,13 +80,13 @@ export default function Billing() {
                 {/* table head  */}
                 <div className="grid xl:grid-cols-4 grid-cols-1 px-8">
                     <div className="flex items-center justify-center xl:justify-start gap-2 py-4">
-                        <span className="text-sm font-semibold text-accent ">Subscriptions</span>
+                        <span className="font-semibold text-primary text-base ">Subscriptions</span>
                     </div>
                     <div className="hidden xl:flex items-center justify-center gap-2 py-4">
-                        <span className="text-sm font-semibold text-accent ">Purchase date</span>
+                        <span className="font-semibold text-primary text-base ">Purchase date</span>
                     </div>
                     <div className="hidden xl:flex items-center justify-center gap-2 py-4">
-                        <span className="text-sm font-semibold text-accent ">Expiration date</span>
+                        <span className="font-semibold text-primary text-base ">Expiration date</span>
                     </div>
                 </div>
                 {/* Table body */}
@@ -97,7 +97,7 @@ export default function Billing() {
 
                         {/* grid 1 - Plan name */}
                         <div className="flex gap-x-4 grid-rows-2 items-center">
-                            <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-accent wrap-anywhere">{plan.name}</h4>
+                            <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-primary wrap-anywhere">{plan.name}</h4>
 
                             <div className={plan.in_use === 1 ? "flex" : " hidden"}>
                                 <p className="col-end-3 text-muted flex items-center gap-3 text-xs font-medium"> <span className="bg-primary-background text-primary/80 font-medium ring-1 ring-border-primary rounded-full text-xs px-2 py-1 xl:hidden 2xl:flex">in use</span></p>
