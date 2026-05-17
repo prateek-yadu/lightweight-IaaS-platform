@@ -3,6 +3,7 @@ import { pool } from "../lib/db.js";
 import { lifecycleQueue } from "../server/queues/instance/lifecycle.queue.js";
 import { Redis } from "ioredis";
 import { redisConnection } from "../lib/redis.js";
+import { logger } from "../lib/logger.utils.js";
 
 config({ path: "../.env" });
 
@@ -36,11 +37,17 @@ const instnaceFromServer = async () => {
       }
       return instances;
     } else {
-      // log error
-      console.log("Something went wrong");
+      await logger.worker.log("sync", {
+        type: "error",
+        message: "Failed to fetch instance list from lxd agent.",
+      });
     }
   } catch (error) {
-    throw new Error("failed to fetch instance list from server");
+    await logger.worker.log("sync", {
+      type: "error",
+      message:
+        "Something went wrong while featching instance list from lxd agent.",
+    });
   }
 };
 
@@ -59,7 +66,11 @@ const instnaceFromDB = async () => {
     }
     return instances;
   } catch (error) {
-    throw new Error("failed to fetch instance list from database");
+    await logger.worker.log("sync", {
+      type: "error",
+      message:
+        "Something went wrong while featching instance list from database.",
+    });
   }
 };
 
@@ -82,12 +93,22 @@ const sendTODeletionQueue = async (instance: any) => {
     const queueReq = await lifecycleQueue(queueData);
 
     if (queueReq === "waiting" || queueReq === "active") {
+      await logger.worker.log("sync", {
+        type: "info",
+        message: `Sended instance ${queueData.name} to delete queue.`,
+      });
       return;
     } else {
-      throw new Error("Error deleting instance");
+      await logger.worker.log("sync", {
+        type: "error",
+        message: `Error can not delete instance ${queueData.name}, Queue returned status ${queueReq}.`,
+      });
     }
   } catch (error) {
-    throw new Error("Error deleting instance");
+    await logger.worker.log("sync", {
+      type: "error",
+      message: `Error sending instance ${instance.id} to delete queue.`,
+    });
   }
 };
 
@@ -109,6 +130,11 @@ const syncState = async (dbList: any, serverList: any) => {
           "UPDATE instances SET status=? WHERE id=?",
           [statusInServer, instance[0]],
         );
+
+        await logger.worker.log("lifecycle", {
+          type: "info",
+          message: `Synced instnace ${instance[0]} status.`,
+        });
       }
     } else {
       // executes when records does not exists on server
@@ -132,6 +158,13 @@ const stopInstance = async (instanceId: string) => {
       { method: "PUT" },
     )
   ).json();
+
+  if (instanceOperationReq === 200) {
+    await logger.worker.log("sync", {
+      type: "success",
+      message: "Instance stopped successfully.",
+    });
+  }
 };
 
 const deleteInstance = async (instance: any) => {
@@ -149,19 +182,25 @@ const deleteInstance = async (instance: any) => {
       ).json();
 
       if (instanceDeletetionReq.status !== 200) {
-        throw new Error("LXD can not create operation");
+        await logger.worker.log("sync", {
+          type: "error",
+          message: `Can not delete ghost instance ${instance.name}, recived ${instanceDeletetionReq.status} status from lxd agent.`,
+        });
       } else {
-        // logo deleted instance
-        console.log(`deleted instance: ${instance.name}`);
+        await logger.worker.log("sync", {
+          type: "success",
+          message: `Ghost instance ${instance.name} delete successfully.`,
+        });
       }
     } else {
       // stop instance -> will be deleted next time worker runs
       await stopInstance(instance.name);
     }
   } catch (error: any) {
-    // log error
-    console.log(error);
-    console.log("can not delete instance");
+    await logger.worker.log("sync", {
+      type: "error",
+      message: `Can not delete gohst instance ${instance.name}.`,
+    });
   }
 };
 
@@ -180,7 +219,10 @@ const removeGhost = async (dbList: any, serverList: any) => {
       }
     }
   } catch (error) {
-    throw new Error("error removing ghost instance");
+    await logger.worker.log("sync", {
+      type: "error",
+      message: "Error removing ghost instance.",
+    });
   }
 };
 
