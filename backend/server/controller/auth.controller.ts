@@ -232,7 +232,7 @@ export const Validate = async (req: customRequest, res: Response) => {
   logger.log("auth", {
     ip: req.ip,
     message: `Hit success`,
-    type: "success",
+    type: "info",
     route: "POST /validate",
     userId: req.id,
   });
