@@ -98,8 +98,8 @@ function Home() {
           </ul>
         </div>
         <div className="flex items-center font-medium text-base gap-4 font-pixelify-sans">
-          <button className="hidden md:flex text-[#31373D] bg-white px-2 md:px-5 py-1 md:py-2 ring-1 ring-[#CDD3DB] rounded-xl text-sm md:text-base">Login</button>
-          <button className="text-white bg-accent px-2 md:px-5 py-1 md:py-2 ring-1 ring-[#505967] rounded-xl text-sm md:text-base">Register</button>
+          <Link to={"/login"} className="hidden md:flex text-[#31373D] bg-white px-2 md:px-5 py-1 md:py-2 ring-1 ring-[#CDD3DB] rounded-xl text-sm md:text-base">Login</Link>
+          <Link to={"/register"} className="text-white bg-accent px-2 md:px-5 py-1 md:py-2 ring-1 ring-[#505967] rounded-xl text-sm md:text-base">Register</Link>
         </div>
       </nav>
 
