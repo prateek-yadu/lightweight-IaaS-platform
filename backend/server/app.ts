@@ -17,7 +17,8 @@ import {
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { Redis } from "ioredis";
-import { cacheInstances } from "./cache/instance.cache.js";
+import { cacheInstances, removeCahe } from "./cache/instance.cache.js";
+import { redisConnection } from "../lib/redis.js";
 
 const app = express();
 const port = 3000; // <-- TODO: Put it in .env file
@@ -32,8 +33,8 @@ const io = new Server(server, {
   },
 });
 
-const redis = new Redis();
-const sub = new Redis();
+const redis = new Redis(redisConnection.connection);
+const sub = new Redis(redisConnection.connection);
 
 // subscribed to instance-events
 sub.subscribe("instance-events", (err, count) => {
@@ -93,6 +94,11 @@ io.on("connection", async (socket) => {
   const userId = socket.data.id; // from auth middleware
   socket.join(`user:${userId}`);
   socket.emit("instance:lifecycle:events", "connected to room");
+
+  // handles disconneted user
+  socket.on("disconnect", ()=>{
+    removeCahe(socket.data.id)
+  })
 });
 
 server.listen(port, () => {

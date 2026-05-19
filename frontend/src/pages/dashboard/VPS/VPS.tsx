@@ -9,42 +9,17 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { socket } from "../../../socket";
-
-interface UserPlan {
-  id: string;
-  in_use: number;
-  purchased_at: string;
-  expires_at: string;
-  name: string;
-  vCPU: number;
-  storage: number;
-  backups: number;
-  memory: number;
-}
-
-interface VM {
-  id: string;
-  name: string;
-  description?: string;
-  status: string;
-  image: string;
-  ip: string;
-  region_name: string;
-  region_code: string;
-  expires_at: string;
-  plan: string;
-  vCPU: number;
-  memory: number;
-  storage: number;
-  backups: number;
-}
+import type { UserPlan } from "../../../interface/UserPlan";
+import type { VM } from "../../../interface/VM";
 
 export default function VPS() {
+  const [refresh, setRefresh] = useState<any>();
+
   // form data
-  const [name, setName] = useState("");
+  const [vmName, setVMName] = useState("");
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<null | string>(null);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false); // stores drawer state
   const [plans, setPlans] = useState<UserPlan[]>([]); // stores user plan info
@@ -71,7 +46,6 @@ export default function VPS() {
     ).data;
     if (response.length > 0) {
       setPlans(response); // sets user plan
-      setSelectedPlan(response[0].id); // by default select plan at index 0
     }
   };
 
@@ -85,6 +59,12 @@ export default function VPS() {
 
   // create VM request
   const createVM = async () => {
+    if (selectedPlan === "No Plan Selected") {
+      toast.error("Please select a plan");
+    }
+
+    setIsDrawerOpen(!isDrawerOpen);
+
     const response = await (
       await fetch("/api/v1/vms", {
         method: "POST",
@@ -92,14 +72,29 @@ export default function VPS() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          vmName: name,
+          vmName: vmName,
           vmDescription: description,
           rootPassword: password,
           planId: selectedPlan,
         }),
       })
     ).json();
+
+    // clears vm name, description, password, plan
+    setVMName("");
+    setDescription("");
+    setPassword("");
+    setSelectedPlan(null);
+
+    setPlans((prev) =>
+      prev.map((plan) =>
+        plan.id == selectedPlan ? { ...plan, in_use: 1 } : plan,
+      ),
+    );
+
     toast(response.message);
+
+    setRefresh(Math.floor(Math.random() * 100));
   };
 
   // update VM state (start, stop, restart)
@@ -159,18 +154,17 @@ export default function VPS() {
         );
       });
     } else {
-      toast.info(response.message);
     }
 
     setIsCollapsableOpen(!isCollapsableOpen); // closes collapsable
   };
 
   const resetForm = () => {
-    setName("");
+    setVMName("");
     setDescription("");
     setPassword("");
     if (plans.length > 0) {
-      setSelectedPlan(plans[0]?.id);
+      setSelectedPlan(null);
     }
   };
 
@@ -292,7 +286,7 @@ export default function VPS() {
       socket.off("disconnect", () => {});
       socket.off("instance:lifecycle:events", () => {});
     };
-  }, []);
+  }, [refresh]);
 
   return (
     <div className="text-primary">
@@ -321,9 +315,9 @@ export default function VPS() {
               type="text"
               name="name"
               id="name"
-              value={name}
+              value={vmName}
               onChange={(e) => {
-                setName(e.target.value);
+                setVMName(e.target.value);
               }}
               className="outline-none border-[1px] rounded border-primary/20 px-2 py-1 text-secondary-foreground bg-primary-background/50 hover:border-primary/40 focus:border-primary/40 focus:shadow-sm"
             />
@@ -417,12 +411,11 @@ export default function VPS() {
               id="plan"
               className="outline-none border-[1px] rounded border-accent/20 px-2 py-1 text-secondary-foreground bg-primary-background/50 hover:border-primary/40 focus:border-primary/40 focus:shadow"
               onChange={(e) => {
-                if (selectedPlan.length >= 0) {
-                  setSelectedPlan(e.target.value);
-                }
+                setSelectedPlan(e.target.value);
               }}
-              value={selectedPlan.length > 0 ? selectedPlan : "null"}
+              value={selectedPlan ? selectedPlan : "No Plan Selected"}
             >
+              <option value="No Plan Selected">Select Plan</option>
               {plans.length > 0 ? (
                 plans?.map(
                   (plan: UserPlan) =>

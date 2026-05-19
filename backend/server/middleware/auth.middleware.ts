@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import send from "../utils/response/index.js";
 import jwt from 'jsonwebtoken';
-import { Socket } from "socket.io";
 import { parse } from "cookie";
 
 interface customRequest extends Request {
