@@ -8,7 +8,7 @@ import { logger } from "../lib/logger.utils.js";
 config({ path: "../.env" });
 
 // new redis instance
-const redis = new Redis();
+const redis = new Redis(redisConnection.connection);
 
 var iscrashed = false;
 

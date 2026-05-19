@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { pool } from "../../lib/db.js";
 import { Redis } from "ioredis";
+import { redisConnection } from "../../lib/redis.js";
 
 type OverallHealth = "Stable" | "Critical" | undefined;
 
@@ -22,7 +23,7 @@ const checkMYSQLHealth = async () => {
 };
 
 const checkRedisHealth = async () => {
-  const redis = new Redis();
+  const redis = new Redis(redisConnection.connection);
   try {
     const pingRes = await redis.ping();
     redis.disconnect(); // closes redis connection
@@ -39,7 +40,7 @@ const checkRedisHealth = async () => {
 };
 
 const checkWorkerHealth = async (worker: string) => {
-  const redis = new Redis();
+  const redis = new Redis(redisConnection.connection);
   try {
     const workerStatus: any = await redis.get(`health:workers:${worker}`);
     redis.disconnect(); // closes redis connection

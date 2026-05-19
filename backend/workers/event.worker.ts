@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import { Redis } from "ioredis";
 import { pool } from "../lib/db.js";
 import { logger } from "../lib/logger.utils.js";
+import { redisConnection } from "../lib/redis.js";
 
 // dotenv config
 config({ path: "../.env" });
@@ -10,7 +11,7 @@ config({ path: "../.env" });
 const socket = new WebSocket(
   `${process.env.LXD_SERVER}/1.0/events?type=${process.env.LXD_EVENTS}&project=${process.env.PROJECT}`,
 );
-const redis = new Redis();
+const redis = new Redis(redisConnection.connection);
 
 var iscrashed = false;
 
