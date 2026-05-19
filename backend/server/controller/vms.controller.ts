@@ -8,6 +8,8 @@ import { instanceData } from "../interface/InstanceData.js";
 import { provisioningQueue } from "../queues/instance/provisioning.queue.js";
 import { lifecycleQueue } from "../queues/instance/lifecycle.queue.js";
 import { lifecycleQueueData } from "../interface/lifecycleQueueData.js";
+import {Redis} from "ioredis";
+import { redisConnection } from "../../lib/redis.js";
 
 interface customRequest extends Request {
   id?: string;
@@ -68,6 +70,7 @@ export const getVM = async (req: customRequest, res: Response) => {
 
 export const createVM = async (req: customRequest, res: Response) => {
   try {
+    const redis = new Redis(redisConnection.connection)
     const { vmName, vmDescription, rootPassword, planId } = req.body; // gets user's subscribed plan ID
 
     const isVailedVMName = validateVMName(vmName); // checks if VM Name is vailed (eg, db01.prateek.inc, staging-server-prateek-labs)or not
@@ -221,6 +224,9 @@ export const createVM = async (req: customRequest, res: Response) => {
                     1,
                   ],
                 );
+
+                // cache VM to instnace-cache to recive instance state info
+                await redis.set(`instance-cache:${vmID}`, userId || vmID, "EX", 86400 );
 
                 logger.log("instance", {
                   ip: req.ip,
