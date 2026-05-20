@@ -94,7 +94,7 @@ export default function VPS() {
 
     toast(response.message);
 
-    setRefresh(Math.floor(Math.random() * 100));
+    setRefresh(Math.random());
   };
 
   // update VM state (start, stop, restart)
@@ -153,7 +153,6 @@ export default function VPS() {
           item.name === name ? { ...item, status: "deleting" } : item,
         );
       });
-    } else {
     }
 
     setIsCollapsableOpen(!isCollapsableOpen); // closes collapsable
@@ -238,9 +237,11 @@ export default function VPS() {
   };
 
   useEffect(() => {
-    getSubscribedPlans();
     getVMs();
+    getSubscribedPlans();
+  }, [refresh]);
 
+  useEffect(() => {
     // establish socket connection
     socket.on("connect", () => {});
     socket.on("disconnect", () => {});
@@ -249,6 +250,10 @@ export default function VPS() {
       const data = JSON.parse(msg);
       let state: string;
       switch (data.operation) {
+        case "instance-created":
+          state = "provisioning";
+          break;
+
         case "instance-started":
         case "instance-restarted":
           state = "running";
@@ -286,7 +291,7 @@ export default function VPS() {
       socket.off("disconnect", () => {});
       socket.off("instance:lifecycle:events", () => {});
     };
-  }, [refresh]);
+  }, []);
 
   return (
     <div className="text-primary">
