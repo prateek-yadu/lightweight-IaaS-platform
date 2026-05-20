@@ -53,6 +53,139 @@ services:
       retries: 3
       start_period: 30s
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      api-server:
+        condition: service_healthy
+
+  api-server:
+    build:
+      context: backend
+      dockerfile: ./docker/api/Dockerfile
+    volumes:
+      - ./logs/backend:/logs/backend
+    ports:
+      - 3000:3000
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: [ "CMD", "curl", "-X GET", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  lxd-agent:
+    build:
+      context: lxd_agent
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs/lxd_agent:/logs/lxd_agent
+    ports:
+      - 8000:8000
+    env_file:
+      - ./lxd_agent/.env
+    healthcheck:
+      test: [ "CMD", "curl", "-X GET", "http://localhost:8000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      proxy:
+        condition: service_healthy
+
+  
+  # Workers 
+  event-worker:
+    build:
+      context: backend
+      dockerfile: ./docker/workers/event-worker/Dockerfile
+    volumes:
+      - ./logs/workers/event:/logs/workers/event
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
+
+  sync-worker:
+    build:
+      context: backend
+      dockerfile: ./docker/workers/sync-worker/Dockerfile
+    volumes:
+      - ./logs/workers/sync:/logs/workers/sync
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
+
+  provision-worker:
+    build:
+      context: backend
+      dockerfile: ./docker/workers/provision-worker/Dockerfile
+    volumes:
+      - ./logs/workers/provision:/logs/workers/provision
+    env_file:
+      - ./backend/.env
+    depends_on:
+      cache:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
+
+  lifecycle-worker:
+    build:
+      context: backend
+      dockerfile: ./docker/workers/lifecycle-worker/Dockerfile
+    volumes:
+      - ./logs/workers/lifecycle:/logs/workers/lifecycle
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
+
+  expiry-worker:
+    build:
+      context: backend
+      dockerfile: ./docker/workers/expiry-worker/Dockerfile
+    volumes:
+      - ./logs/workers/expiry:/logs/workers/expiry
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
 
   # Monitoring
   scraper:
