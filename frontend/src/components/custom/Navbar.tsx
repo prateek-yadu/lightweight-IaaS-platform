@@ -1,68 +1,205 @@
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../app/store';
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../app/store";
 import Branding from "../../branding.json";
-
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "../ui/navigation-menu";
+import { Link, useNavigate } from "react-router";
+import { TypographyH4 } from "../Typography/Typography";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { BadgeCheckIcon, CreditCardIcon, LogOutIcon, LucideLayoutDashboard } from "lucide-react";
+import { updateAuthState } from "@/app/features/auth/AuthHandler";
+import { toast } from "sonner";
 
 export default function Navbar() {
+  const appName = Branding.AppName; // gets app name from @/src/branding.json
 
-    const appName = Branding.AppName; // gets app name from @/src/branding.json
+  // gets AuthState
+  const authState = useSelector((state: RootState) => state.AuthState);
 
-    // gets AuthState
-    const authState = useSelector((state: RootState) => state.AuthState);
+  // checks if user is authenticated or not
+  const isAuthenticated = authState.isAuthenticated;
 
-    // checks if user is authenticated or not
-    const isAuthenticated = authState.isAuthenticated;
+  // gets user details
+  const user = useSelector((state: RootState) => state.AuthState);
+  const dispatch = useDispatch();
 
-    // gets user details
-    const user = useSelector((state: RootState) => state.AuthState);
+  const navigate = useNavigate();
 
-    // genrates user fallback text 
-    const arr = user.name?.split(" ");
-    const fallbackUserAvatar = `${arr?.at(0)?.toUpperCase().charAt(0) + `${arr?.at(arr.length - 1)?.toUpperCase().charAt(0)}`}`;
+  // genrates user fallback text
+  const arr = user.name?.split(" ");
+  const fallbackUserAvatar = `${
+    arr?.at(0)?.toUpperCase().charAt(0) +
+    `${arr
+      ?.at(arr.length - 1)
+      ?.toUpperCase()
+      .charAt(0)}`
+  }`;
 
+  const links = [
+    {
+      name: "Home",
+      href: "/",
+    },
+    {
+      name: "Pricing",
+      href: "/pricing",
+    },
+  ];
 
-    const links = [
-        {
-            name: "Home",
-            href: "/"
+  const accountLinks = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: LucideLayoutDashboard,
+    },
+    {
+      name: "Account",
+      href: "/account",
+      icon: BadgeCheckIcon,
+    },
+    {
+      name: "Billing",
+      href: "/dashboard/billing",
+      icon: CreditCardIcon,
+    },
+  ];
+
+  // utility function to cahnge route
+  const changeRoute = (route: string) => {
+    let path = route;
+    navigate(path);
+  };
+
+  const logoutUser = async () => {
+    const res = await (
+      await fetch("/api/v1/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-            name: "Services",
-            href: "/services"
-        },
-        {
-            name: "Blogs",
-            href: "/blogs"
-        },
-        {
-            name: "Pricing",
-            href: "/pricing"
-        },
-        {
-            name: "Support",
-            href: "/support"
-        },
-    ];
-    return (
-        <nav className='border-b-[1px] border-border-primary'>
-            <div className='container m-auto py-4 flex items-center justify-between'>
-                <h2 className="logo font-semibold text-xl text-primary">{appName}</h2>
-                <ul className='flex items-center gap-4'>
-                    {links.map((link) => (
-                        <li className='text-secondary-foreground hover:text-accent cursor-pointer' key={link.href}>{link.name}</li>
-                    ))}
-                </ul>
-                {isAuthenticated ? <div className='flex items-center justify-center gap-4'>
-                    <div className="size-10 rounded-full">
-                        <img src={"https://img.freepik.com/free-photo/sunset-time-tropical-beach-sea-with-coconut-palm-tree_74190-1075.jpg?semt=ais_hybrid&w=740&q=80"} alt={fallbackUserAvatar}
-                            className='w-full h-full object-cover rounded-full'
-                        />
+      })
+    ).json();
+
+    if (res.status == 200) {
+      // clears user detail when user logs out
+      dispatch(
+        updateAuthState({
+          isAuthenticated: false,
+          name: undefined,
+          email: undefined,
+          imageUrl: undefined,
+        }),
+      );
+      toast.success(res.message);
+    } else {
+      toast.error(res.message);
+    }
+  };
+
+  return (
+    <nav className="bg-background">
+      <div className="container m-auto p-4 flex justify-between">
+        {/* Brand Icon */}
+        <Link to={"/"} className="flex items-center gap-2">
+          <img src="/brandIcon.svg" alt="brand-icon" className="size-7" />
+          <TypographyH4>{appName}</TypographyH4>
+        </Link>
+
+        <NavigationMenu>
+          <NavigationMenuList className={"space-x-2"}>
+            {links.map((link) => (
+              <NavigationMenuItem key={link.name}>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  render={<Link to={link.href}>{link.name}</Link>}
+                />
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar>
+                <AvatarImage src={user.imageUrl} alt={user.name} />
+                <AvatarFallback>{fallbackUserAvatar}</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-56 rounded-lg" side={"bottom"} align="end" sideOffset={4}>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar>
+                      <AvatarImage src={user.imageUrl} alt={user.name} />
+                      <AvatarFallback>{fallbackUserAvatar}</AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">{user.name}</span>
+                      <span className="truncate text-xs">{user.email}</span>
                     </div>
-                </div> : <div className="flex items-center justify-center gap-5 font-medium">
-                    <button className='text-sm text-primary'>Login</button>
-                    <button className='bg-accent px-4 py-2 text-white rounded-full text-sm'>Register</button>
-                </div>}
-            </div>
-        </nav>
-    );
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {accountLinks.map((link) => (
+                  <DropdownMenuItem>
+                    <Link to={link.href} className="flex items-center gap-2 w-full">
+                      <link.icon />
+                      {link.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  logoutUser();
+                }}
+              >
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button
+              className={"p-4"}
+              onClick={() => {
+                changeRoute("/login");
+              }}
+            >
+              Login
+            </Button>
+            <Button
+              className={"p-4"}
+              variant={"outline"}
+              onClick={() => {
+                changeRoute("/register");
+              }}
+            >
+              Register
+            </Button>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
 }
