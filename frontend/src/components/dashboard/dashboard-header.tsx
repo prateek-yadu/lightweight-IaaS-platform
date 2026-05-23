@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { TypographyH3 } from "../Typography/Typography";
+import { TypographyH3 } from "../Typography/typography";
 
 type DashboardHeaderProps = {
   title: string;
