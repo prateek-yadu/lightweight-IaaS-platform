@@ -145,7 +145,7 @@ CREATE TABLE `plans` (
 
 LOCK TABLES `plans` WRITE;
 /*!40000 ALTER TABLE `plans` DISABLE KEYS */;
-INSERT INTO `plans` VALUES (1,'KVM 1','Entry-level plan for small projects, development, and testing.',599,1,2,25,0,28,'2025-12-04 10:52:24','2025-12-04 10:52:24'),(2,'KVM 2','Standard plan for moderate web traffic and small-business applications.',1199,2,4,50,1,28,'2025-12-04 10:52:24','2025-12-04 10:52:24'),(3,'KVM 4','High-performance plan for demanding applications and production environments.',2299,4,8,100,1,28,'2025-12-04 10:52:24','2025-12-04 10:52:24');
+INSERT INTO `plans` VALUES (1,'KVM 1','Perfect for individuals and small projects',599,1,2,25,0,28,'2025-12-04 10:52:24','2025-12-04 10:52:24'),(2,'KVM 2','Ideal for growing teams and businesses',1199,2,4,50,1,28,'2025-12-04 10:52:24','2025-12-04 10:52:24'),(3,'KVM 4','For large enterprises and advanced needs',2299,4,8,100,1,28,'2025-12-04 10:52:24','2025-12-04 10:52:24');
 /*!40000 ALTER TABLE `plans` ENABLE KEYS */;
 UNLOCK TABLES;
 
