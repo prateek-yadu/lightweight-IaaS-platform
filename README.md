@@ -4,7 +4,7 @@
 
 The aim of this project is to understand under the hood how VPS providers work. This project is heavily inspired by Hostinger's VPS Pannel and trying to replicate the billing process seen in the hostinger. Though this project is inspired by hostinger, in future releases it is planned to make project standout as it's own niche.
 
-![Demo Video](frontend/public/videos/demo.webm)
+[Demo Video](https://github.com/user-attachments/assets/554ad4fb-422f-4942-8a97-684a673e9cd5)
 
 ## Features
 
@@ -15,6 +15,7 @@ The aim of this project is to understand under the hood how VPS providers work. 
 - using cloud-init for VM setup and initialization.
 - queueing logic using bullMQ.
 - separation of business and infrastructure logic.
+
 - logging and metrics support.
 - visualization of logs & metrics using grafana dashboard.
 - alerting system if something went wrong.
