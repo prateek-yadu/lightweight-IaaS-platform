@@ -2,24 +2,23 @@
 
 ## Introduction
 
-The aim of this project is to understand under the hood how VPS providers work. This project is heavily inspired by Hostinger's VPS Pannel and trying to replicate the billing process seen in the hostinger. Though this project is inspired by hostinger, in future releases it is planned to make project standout as it's own niche.
+The aim of this project is to understand under the hood how VPS providers work. This project includes complete instance lifecycle management, static IP allocation, workers and basic monitoring using loki for logs collection and grafana for visualization. 
 
 [Demo Video](https://github.com/user-attachments/assets/554ad4fb-422f-4942-8a97-684a673e9cd5)
 
 ## Features
 
 - using LXD for VM initialization.
-- complete instance lifecycle with.
-- statefull connection b/w client and server using socket.io.
+- complete instance lifecycle.
+- static IP for each instance.
+- stateful connection b/w client and server using socket.io.
 - implemented workers for instance operation & state sync.
 - using cloud-init for VM setup and initialization.
 - queueing logic using bullMQ.
 - separation of business and infrastructure logic.
-
-- logging and metrics support.
-- visualization of logs & metrics using grafana dashboard.
-- alerting system if something went wrong.
-- health check implementation with basic health checking.
+- logging support.
+- visualization of logs using grafana dashboard.
+- basic health check.
 - docker-compose file for easy deployments and setup.
 
 ## Architecture
@@ -37,7 +36,7 @@ The aim of this project is to understand under the hood how VPS providers work. 
 
 **Infrastructure :-** LXD, Cloud-init, Docker
 
-**Monitoring & Observibility :-** Grafana, loki, prometheus
+**Monitoring & Observibility :-** Grafana, loki
 
 ## Requirements
 
@@ -56,20 +55,20 @@ The project should meet the following requirements as development and testing is
 
 ## Quick start
 
-To run project you can either use docker or run manually. I recommend to run this project using docker.
+To run the project you can either use docker or run manually. I recommend running this project using docker.
 
-Additionally before Quick Start refer to the `__docs__/lxd/README.md` for setup docs of LXD.
+Additionally before Quick Start refer to `__docs__/setup-guide/lxd/README.md` for setup docs of LXD.
 
-Now that LXD is installed let's continue.
+Now that LXD is installed, let's continue.
 
 ### Run via npm
 
-To run project manually you need to perform some extra steps.
+To run the project manually you need to perform some extra steps.
 
 - Install Redis.
 - Install mysql and import sql file from `__deploy__/mysql/prateek_labs.sql`.
 - Also import `my.cnf` file from `__deploy__/mysql/my.cnf`.
-- You also need to setup Nginx refer to `__docs__/nginx/README.md` for setup guide.
+- You also need to setup Nginx refer to `__docs__/setup-guide/nginx/README.md` for setup guide.
 
 Now that everything is configured let's start.
 
@@ -120,7 +119,7 @@ docker compose up
 ```
 
 > [!NOTE]
-> Before starting server add environment variables in backend and lxd_agent.
+> Before starting the server add environment variables in frontend, backend and lxd_agent.
 
 ## Documentation
 
@@ -130,16 +129,16 @@ For detailed documentation refer to the `__docs__` directory.
 
 - Project currently does not support multiple regions.
 - Only one Operating System support.
-- No support for adding ssh keys from UI.
+- No support for adding ssh keys from the UI.
 - No support for Oauth registeration/login.
 - basic API for plan purchase, no payment gateway integration like razorpay or stripe.
 - No test cases.
 
 ## Future Implementation
 
-- Seperate router for each users.
+- Separate router for each user.
 - bandwidth limit & analytics.
 - Firewall configuration via UI.
 - Market place for pre-built images.
-- VMs metrics on dashboard (client's bowser).
+- VMs metrics on dashboard (client's browser).
 - Multi region or server support.
