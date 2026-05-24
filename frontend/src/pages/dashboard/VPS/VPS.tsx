@@ -501,7 +501,7 @@ export default function VPS() {
           <EmptyHeader>
             <EmptyTitle>No VPS Found.</EmptyTitle>
             <EmptyDescription>
-              We could not find any VPS linked with your accound. Would you like to create one?
+              We could not find any VPS linked with your account. Would you like to create one?
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center gap-2">
