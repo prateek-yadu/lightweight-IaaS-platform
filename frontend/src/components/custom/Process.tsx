@@ -1,4 +1,4 @@
-import { Activity, Bolt, CreditCard, PackageOpen, Server } from "lucide-react";
+import { Bolt, CreditCard, PackageOpen, Server } from "lucide-react";
 import Branding from "../../branding.json";
 import { useState } from "react";
 
