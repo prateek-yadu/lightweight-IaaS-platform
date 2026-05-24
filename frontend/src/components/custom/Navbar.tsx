@@ -9,7 +9,7 @@ import {
   navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
 import { Link, useNavigate } from "react-router";
-import { TypographyH4 } from "../Typography/Typography";
+import { TypographyH4 } from "../Typography/typography";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -21,9 +21,15 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { BadgeCheckIcon, CreditCardIcon, LogOutIcon, LucideLayoutDashboard } from "lucide-react";
+import { BadgeCheckIcon, CreditCardIcon, LogOutIcon, LucideLayoutDashboard, Menu } from "lucide-react";
 import { updateAuthState } from "@/app/features/auth/AuthHandler";
 import { toast } from "sonner";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Navbar() {
   const appName = Branding.AppName; // gets app name from @/src/branding.json
@@ -120,7 +126,7 @@ export default function Navbar() {
           <TypographyH4>{appName}</TypographyH4>
         </Link>
 
-        <NavigationMenu>
+        <NavigationMenu className={"hidden md:block"}>
           <NavigationMenuList className={"space-x-2"}>
             {links.map((link) => (
               <NavigationMenuItem key={link.name}>
@@ -132,6 +138,8 @@ export default function Navbar() {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
+
+        <div className="flex items-center gap-2 flex-row-reverse">
 
         {isAuthenticated ? (
           <DropdownMenu>
@@ -179,7 +187,7 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <Button
               className={"p-4"}
               onClick={() => {
@@ -199,6 +207,48 @@ export default function Navbar() {
             </Button>
           </div>
         )}
+
+        {/* Nav for mobile devices */}
+        <Sheet>
+          <SheetTrigger>
+            <Menu className="md:hidden" />
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>Navigation Menu</SheetHeader>
+            <ul className={"space-x-2 flex  flex-col w-full gap-y-6"}>
+              {links.map((link) => (
+                <li key={link.name} className="w-full">
+                  <Link to={link.href} className="text-base font-medium pl-6 block">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {!isAuthenticated && (
+              <div className="flex items-center gap-2 flex-col px-4">
+                <Button
+                  className={"p-4 w-full"}
+                  onClick={() => {
+                    changeRoute("/login");
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  className={"p-4 w-full"}
+                  variant={"outline"}
+                  onClick={() => {
+                    changeRoute("/register");
+                  }}
+                >
+                  Register
+                </Button>
+              </div>
+            )}
+          </SheetContent>
+        </Sheet>
+      </div>
       </div>
     </nav>
   );
