@@ -4,7 +4,7 @@
 
 The aim of this project is to understand under the hood how VPS providers work. This project is heavily inspired by Hostinger's VPS Pannel and trying to replicate the billing process seen in the hostinger. Though this project is inspired by hostinger, in future releases it is planned to make project standout as it's own niche.
 
-![Pannel Screenshot](__docs__/screenshots/Pannel.png)
+![Demo Video](frontend/public/videos/demo.webm)
 
 ## Features
 
