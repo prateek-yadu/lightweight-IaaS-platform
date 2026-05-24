@@ -119,7 +119,7 @@ docker compose up
 ```
 
 > [!NOTE]
-> Before starting the server add environment variables in backend and lxd_agent.
+> Before starting the server add environment variables in frontend, backend and lxd_agent.
 
 ## Documentation
 
