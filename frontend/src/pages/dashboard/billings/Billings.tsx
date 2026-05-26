@@ -3,21 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { UserPlan } from "@/interface/UserPlan";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
-
-interface UserPlan {
-  id: string;
-  in_use: number;
-  purchased_at: string;
-  expires_at: string;
-  name: string;
-  vCPU: number;
-  storage: number;
-  backups: number;
-  memory: number;
-}
 
 export default function Billing() {
   const [plans, setPlans] = useState<UserPlan[] | null>(null);
