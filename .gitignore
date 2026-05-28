@@ -1,11 +1,11 @@
 
 # Persistent data
-__deploy__/mysql/data
-__deploy__/redis/data
+__infra__/mysql/data
+__infra__/redis/data
 
 # Nginx Certificates
-__deploy__/nginx/certificates/*.key
-__deploy__/nginx/certificates/*.crt
+__infra__/nginx/certificates/*.key
+__infra__/nginx/certificates/*.crt
 
 # Backend
 
