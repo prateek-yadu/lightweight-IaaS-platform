@@ -3,10 +3,10 @@ services:
     image: nginx:stable-alpine
     container_name: nginx
     volumes:
-      - ./__deploy__/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./__deploy__/nginx/lxd.conf:/etc/nginx/templates/default.conf.template
-      - ./__deploy__/nginx/certificates/nginx.crt:/etc/nginx/crts/nginx.crt
-      - ./__deploy__/nginx/certificates/nginx.key:/etc/nginx/crts/nginx.key
+      - ./__infra__/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./__infra__/nginx/lxd.conf:/etc/nginx/templates/default.conf.template
+      - ./__infra__/nginx/certificates/nginx.crt:/etc/nginx/crts/nginx.crt
+      - ./__infra__/nginx/certificates/nginx.key:/etc/nginx/crts/nginx.key
     environment:
       - LXD_SERVER_URL=https://192.168.29.102:8443
     ports:
@@ -22,9 +22,9 @@ services:
     image: mysql:oraclelinux9
     container_name: mysql-1
     volumes:
-      - ./__deploy__/mysql/my.cnf:/etc/my.cnf
-      - ./__deploy__/mysql/data:/var/lib/mysql
-      - ./__deploy__/mysql:/docker-entrypoint-initdb.d
+      - ./__infra__/mysql/my.cnf:/etc/my.cnf
+      - ./__infra__/mysql/data:/var/lib/mysql
+      - ./__infra__/mysql:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=password
     ports:
@@ -41,7 +41,7 @@ services:
     image: redis:alpine3.23
     container_name: redis
     volumes:
-      - ./__deploy__/redis/data:/data
+      - ./__infra__/redis/data:/data
     environment:
       - REDIS_ARGS=--appendonly yes
     ports:
@@ -195,7 +195,7 @@ services:
       - 12345:12345
       - 4318:4318
     volumes:
-      - ./__deploy__/loki/config.alloy:/etc/alloy/config.alloy
+      - ./__infra__/loki/config.alloy:/etc/alloy/config.alloy
       - ./logs:/temp/logs
     command: run --server.http.listen-addr=0.0.0.0:12345 --stability.level=experimental  --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     depends_on:
@@ -207,7 +207,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./__deploy__/loki/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./__infra__/loki/loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
