@@ -30,6 +30,7 @@
     "bcrypt": "^6.0.0",
     "express-session": "^1.19.0",
     "pg": "^8.23.0",
+    "razorpay": "^2.9.8",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "zod": "^4.6.5"
