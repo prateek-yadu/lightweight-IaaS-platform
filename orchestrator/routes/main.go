@@ -20,6 +20,7 @@ func getRoutes() {
 
 	api := router.Group("/api")
 	healthRoute(api)
+	instanceRoute(api)
 }
 
 // Run will start the server
