@@ -2,7 +2,11 @@ module github.com/prateek-yadu/lightweight-IaaS-platform/orchestrator
 
 go 1.26.6
 
-require github.com/gin-gonic/gin v1.12.0
+require (
+	github.com/gin-gonic/gin v1.12.0
+	github.com/google/uuid v1.6.0
+	github.com/rabbitmq/amqp091-go v1.15.0
+)
 
 require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
