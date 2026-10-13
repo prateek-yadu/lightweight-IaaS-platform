@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/prateek-yadu/lightweight-IaaS-platform/orchestrator/lib/connections"
+	"github.com/prateek-yadu/lightweight-IaaS-platform/orchestrator/lib/utils/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
 )
@@ -52,12 +53,13 @@ func UpdateInstanceState(instanceName string, state string) (gin.H, error) {
 	// body to send in topic
 	body, err := json.Marshal(map[string]any{
 		"id":   operationId,
-		"type": "start_instance",
+		"type": types.StartInstance,
 		"payload": map[string]any{
-			"instance_name": instanceName,
-			"state":         state,
+			"instance": instanceName,
+			"state":    state,
 		},
-		"status": "pending",
+		"status":    types.StatusPending,
+		"timestamp": time.Now().UTC(),
 	})
 
 	if err != nil {
@@ -80,9 +82,10 @@ func UpdateInstanceState(instanceName string, state string) (gin.H, error) {
 	}
 
 	return map[string]any{
-		"id":          operationId,
-		"status":      "pending",
-		"description": "updating instance state to " + state,
-		"created_at":  time.Now().UTC(),
+		"id":        operationId,
+		"status":    types.StatusPending,
+		"instance":  instanceName,
+		"type":      types.StartInstance,
+		"timestamp": time.Now().UTC(),
 	}, nil
 }
