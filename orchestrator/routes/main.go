@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/prateek-yadu/lightweight-IaaS-platform/orchestrator/lib/connections"
 	"log"
 	"net/http"
 	"os"
@@ -20,6 +21,7 @@ func getRoutes() {
 
 	api := router.Group("/api")
 	healthRoute(api)
+	instanceRoute(api)
 }
 
 // Run will start the server
@@ -49,8 +51,10 @@ func Run() {
 
 	// clean-up code
 	defer func() {
-		log.Println("INFO: server closed successfully!")
-
+		// close rabbitMQ connection
+		rabbit := connections.RabbitPtr
+		rabbit.Conn.Close()
+		log.Println("INFO: Rabbit connection closed successfully!")
 	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
