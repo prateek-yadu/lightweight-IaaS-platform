@@ -10,6 +10,7 @@ import (
 func main() {
 	libvirtConnectionString := flag.String("libvirtUrl", "", "libvirt connection string\n")
 	rabbitConnectionString := flag.String("rabbitUrl", "", "rabbitmq connection string\n")
+	redisConnectionString := flag.String("redisUrl", "", "redis connection string\n")
 	workerType := flag.String("type", "", `set worker type
 	- "instance.start"	start instance
 `)
@@ -21,9 +22,10 @@ func main() {
 		return
 	}
 
-	// connect to rabbitMQ
+	// connections
 	connections.ConnectToMQ(*rabbitConnectionString)
 	connections.LibvirtConnect(*libvirtConnectionString)
+	connections.ConnectToRedis(*redisConnectionString)
 
 	switch *workerType {
 	case "instance.start":
