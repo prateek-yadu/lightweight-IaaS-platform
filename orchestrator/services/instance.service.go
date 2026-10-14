@@ -81,11 +81,29 @@ func UpdateInstanceState(instanceName string, state string) (gin.H, error) {
 		return nil, errors.New("Failed to publish a message")
 	}
 
-	return map[string]any{
+	res := map[string]any{
 		"id":        operationId,
 		"status":    types.StatusPending,
 		"instance":  instanceName,
 		"type":      types.StartInstance,
 		"timestamp": time.Now().UTC(),
-	}, nil
+	}
+
+	resJson, err := json.Marshal(res)
+
+	// send operation to redis
+	redis := connections.RedisPtr.Client
+
+	// redis context
+	rctx := context.Background()
+
+	key := "operation:" + operationId
+
+	redisErr := redis.Set(rctx, key, string(resJson), 0)
+
+	if redisErr.Err() != nil {
+		return nil, errors.New("Failed to update operation status to redis")
+	}
+
+	return res, nil
 }
