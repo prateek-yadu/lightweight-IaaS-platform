@@ -9,5 +9,5 @@ func operationsRoutes(rg *gin.RouterGroup) {
 	operations := rg.Group("/operations")
 
 	operations.GET("", controller.GetAllOperations)
-
+	operations.GET(":operationId", controller.GetOperation)
 }

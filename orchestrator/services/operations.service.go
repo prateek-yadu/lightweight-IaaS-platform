@@ -50,3 +50,25 @@ func GetAllOperations() (gin.H, error) {
 	}, nil
 }
 
+func GetOperation(operationId string) (gin.H, error) {
+
+	redis := connections.RedisPtr.Client
+
+	// redis context
+	ctx := context.Background()
+
+	// store operation
+	res := models.Operation{}
+
+	operation := redis.Get(ctx, "operation:"+operationId).Val()
+
+	err := json.Unmarshal([]byte(operation), &res)
+
+	if err != nil {
+		return nil, errors.New("Error can not convert operation to json")
+	}
+
+	return map[string]any{
+		"operation": res,
+	}, nil
+}

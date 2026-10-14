@@ -16,3 +16,15 @@ func GetAllOperations(c *gin.Context) {
 	response.OK(c, res)
 }
 
+func GetOperation(c *gin.Context) {
+
+	operationId := c.Param("operationId")
+
+	res, err := services.GetOperation(operationId)
+	if err != nil {
+		response.InternalServerError(c, err)
+		return
+	}
+
+	response.OK(c, res)
+}
