@@ -55,6 +55,11 @@ func Run() {
 		rabbit := connections.RabbitPtr
 		rabbit.Conn.Close()
 		log.Println("INFO: Rabbit connection closed successfully!")
+
+		// close Redis connection
+		redis := connections.RedisPtr
+		redis.Client.Close()
+		log.Println("INFO: Redis connection closed successfully!")
 	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
