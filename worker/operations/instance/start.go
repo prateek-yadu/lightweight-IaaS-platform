@@ -76,11 +76,15 @@ func worker(msgs <-chan amqp.Delivery, done chan bool) {
 		var operation models.InstanceOperation
 		byt := d.Body
 		if err := json.Unmarshal(byt, &operation); err != nil {
-			panic(err)
+			log.Println("ERR: error parsing json")
 		}
 
 		// update operation state to running
-		operation.Status = types.StatusRunning
+		errUpadteRunnung := funcs.UpdateOperationState(operation.Id, types.StatusRunning)
+
+		if errUpadteRunnung != nil {
+			log.Println(errUpadteRunnung.Error())
+		}
 
 		// libvirt connection
 		conn := connections.LibvirtPtr.Conn
@@ -89,24 +93,33 @@ func worker(msgs <-chan amqp.Delivery, done chan bool) {
 		dom, err := conn.LookupDomainByName(operation.Payload.Instance)
 
 		if err != nil {
-			log.Println("error occured coz", err)
+			log.Println("error occurred", err)
 
 			if dom != nil {
 				dom.Free()
 			}
 
 			// update operation state to failed
-			operation.Status = types.StatusFailed
+			errUpdateFailed := funcs.UpdateOperationState(operation.Id, types.StatusFailed)
+
+			if errUpdateFailed != nil {
+				log.Println(errUpdateFailed.Error())
+			}
 
 			d.Ack(false)
 			continue
 		}
 
-		dom.Create()
+		// dom.Create()
 		dom.Free()
 
 		// update operation state to success
-		operation.Status = types.StatusSuccess
+		errUpdateSuccess := funcs.UpdateOperationState(operation.Id, types.StatusSuccess)
+
+		if errUpdateSuccess != nil {
+			log.Println(errUpdateSuccess.Error())
+		}
+
 		d.Ack(true)
 	}
 	done <- true
