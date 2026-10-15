@@ -1,12 +1,11 @@
 package funcs
 
 import (
+	"github.com/prateek-yadu/lightweight-IaaS-platform/worker/lib/connections"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/prateek-yadu/lightweight-IaaS-platform/worker/lib/connections"
 )
 
 func GracefullShutdown() {
@@ -30,6 +29,11 @@ func GracefullShutdown() {
 		rabbit := connections.RabbitPtr
 		rabbit.Conn.Close()
 		log.Println("INFO: Rabbit connection closed successfully!")
+
+		// close Redis connection
+		redis := connections.RedisPtr
+		redis.Client.Close()
+		log.Println("INFO: Redis connection closed successfully!")
 	}()
 
 	log.Println("INFO: Worker exiting")

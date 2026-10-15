@@ -10,6 +10,10 @@ func main() {
 
 	// connect to rabbitMQ
 	connections.ConnectToMQ()
+
+	// connect to redis
+	connections.ConnectToRedis()
+
 	log.Println("INFO: server running on: http://localhost:8765")
 	routes.Run()
 }
