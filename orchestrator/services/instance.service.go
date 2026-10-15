@@ -14,10 +14,16 @@ import (
 
 func UpdateInstanceState(instanceName string, state string) (gin.H, error) {
 
-	if !(state == "start" || state == "shutdown" || state == "reboot") {
+	switch state {
+	case "start":
+		return startInstance(instanceName, state)
+	default:
 		return nil, errors.New("state '" + state + "' not supported")
 	}
 
+}
+
+func startInstance(instanceName string, state string) (gin.H, error) {
 	conn := connections.RabbitPtr.Conn
 
 	// open a channel
