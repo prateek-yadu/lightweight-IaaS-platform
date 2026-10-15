@@ -110,7 +110,7 @@ func worker(msgs <-chan amqp.Delivery, done chan bool) {
 			continue
 		}
 
-		// dom.Create()
+		dom.Create()
 		dom.Free()
 
 		// update operation state to success
