@@ -30,6 +30,8 @@ func main() {
 	switch *workerType {
 	case "instance.start":
 		instance.StartInstance()
+	case "instance.shutdown":
+		instance.StopInstance()
 	default:
 		fmt.Printf("worker does not exists, try help!")
 	}
