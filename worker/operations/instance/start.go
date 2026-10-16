@@ -10,16 +10,10 @@ import (
 	"log"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
-
 func StartInstance() {
 
 	ch, err := connections.RabbitPtr.Conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	funcs.FailOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
@@ -31,7 +25,7 @@ func StartInstance() {
 		false,                // no-wait
 		nil,                  // arguments
 	)
-	failOnError(err, "Failed to declare an exchange")
+	funcs.FailOnError(err, "Failed to declare an exchange")
 
 	q, err := ch.QueueDeclare(
 		"start_instance", // name
@@ -41,7 +35,7 @@ func StartInstance() {
 		false,            // no-wait
 		nil,              // arguments
 	)
-	failOnError(err, "Failed to declare a queue")
+	funcs.FailOnError(err, "Failed to declare a queue")
 
 	err = ch.QueueBind(
 		q.Name,               // queue name
@@ -49,7 +43,7 @@ func StartInstance() {
 		"libvirt_operations", // exchange
 		false,
 		nil)
-	failOnError(err, "Failed to bind a queue")
+	funcs.FailOnError(err, "Failed to bind a queue")
 
 	msgs, err := ch.Consume(
 		q.Name, // queue
@@ -60,16 +54,16 @@ func StartInstance() {
 		false,  // no wait
 		nil,    // args
 	)
-	failOnError(err, "Failed to register a consumer")
+	funcs.FailOnError(err, "Failed to register a consumer")
 
 	done := make(chan bool)
 
-	go worker(msgs, done)
+	go startWorker(msgs, done)
 
 	funcs.GracefullShutdown()
 }
 
-func worker(msgs <-chan amqp.Delivery, done chan bool) {
+func startWorker(msgs <-chan amqp.Delivery, done chan bool) {
 	for d := range msgs {
 
 		// parse json
