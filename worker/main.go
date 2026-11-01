@@ -14,6 +14,7 @@ func main() {
 	workerType := flag.String("type", "", `set worker type
 	- "instance.start"	start instance
 	- "instance.shutdown" shutdown instance
+	- "instance.reboot" reboot instance
 `)
 
 	flag.Parse()
@@ -33,6 +34,8 @@ func main() {
 		instance.StartInstance()
 	case "instance.shutdown":
 		instance.StopInstance()
+	case "instance.reboot":
+		instance.RebootInstance()
 	default:
 		fmt.Printf("worker does not exists, try help!")
 	}

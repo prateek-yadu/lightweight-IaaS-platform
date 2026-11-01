@@ -1,6 +1,7 @@
 package types
 
 var (
-	StartInstance = "start_instance"
-	StopInstance = "stop_instance"
+	StartInstance  = "start_instance"
+	StopInstance   = "stop_instance"
+	RebootInstnace = "reboot_instance"
 )
