@@ -5,9 +5,10 @@ import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { ConfigModule } from '@nestjs/config';
+import { PlansModule } from './plans/plans.module.js';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UsersModule, DatabaseModule],
+  imports: [ConfigModule.forRoot(), AuthModule, UsersModule, DatabaseModule, PlansModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -10,7 +10,7 @@ import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async loginUser(loginUserDto: LoginUserDto, session: Record<string, any>) {
     // connect to pool
