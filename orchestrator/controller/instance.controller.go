@@ -26,3 +26,22 @@ func UpdateInstanceState(c *gin.Context) {
 
 	response.Created(c, res)
 }
+
+func CreateInstance(c *gin.Context) {
+	var body types.CreateInstance
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		response.BadRequest(c, err)
+		return
+	}
+
+	res, err := services.CreateInstance(body)
+
+	if err != nil {
+		response.InternalServerError(c, err)
+		return
+	}
+
+	response.Created(c, res)
+
+}
