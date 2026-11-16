@@ -17,3 +17,7 @@ backend/.env
 # Logs
 
 logs
+
+storage/*
+
+image/*
