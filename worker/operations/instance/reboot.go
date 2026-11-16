@@ -68,7 +68,7 @@ func rebootWorker(msgs <-chan amqp.Delivery, done chan bool) {
 	for d := range msgs {
 
 		// parse json
-		var operation models.InstanceOperation
+		var operation models.InstanceUpdateOperation
 		byt := d.Body
 		if err := json.Unmarshal(byt, &operation); err != nil {
 			log.Println("ERR: error parsing json")
