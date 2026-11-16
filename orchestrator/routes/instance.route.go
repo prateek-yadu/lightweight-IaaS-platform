@@ -9,5 +9,7 @@ func instanceRoute(rg *gin.RouterGroup) {
 
 	instance := rg.Group("/instance")
 
+	instance.POST("", controller.CreateInstance)
+
 	instance.PUT(":name", controller.UpdateInstanceState)
 }
