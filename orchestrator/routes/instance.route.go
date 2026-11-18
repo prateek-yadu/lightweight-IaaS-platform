@@ -12,4 +12,6 @@ func instanceRoute(rg *gin.RouterGroup) {
 	instance.POST("", controller.CreateInstance)
 
 	instance.PUT(":name", controller.UpdateInstanceState)
+
+	instance.DELETE(":uuid", controller.DeleteInstance)
 }
