@@ -33,3 +33,14 @@ type Auth struct {
 	Password string   `json:"password"`
 	SSH_KEY  []string `json:"ssh_key"`
 }
+
+type DeleteInstanceOperation struct {
+	Id             string                 `json:"id" binding:"required"`
+	Status         string                 `json:"status" binding:"required"`
+	Payload        DeleteOperationPayload `json:"payload" binding:"required"`
+	Operation_type string                 `json:"type" binding:"required"`
+}
+
+type DeleteOperationPayload struct {
+	UUID string `json:"uuid" binding:"required"`
+}

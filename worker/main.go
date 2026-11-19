@@ -20,6 +20,7 @@ func main() {
 	- "instance.shutdown" shutdown instance
 	- "instance.reboot" reboot instance
 	- "instance.create" create instance
+	- "instance.delete" delete instance
 `)
 
 	flag.Parse()
@@ -42,6 +43,8 @@ func main() {
 		instance.StopInstance()
 	case "instance.reboot":
 		instance.RebootInstance()
+	case "instance.delete":
+		instance.DeleteInstance(*goldenImageDir, *storageDir)
 	default:
 		fmt.Printf("worker does not exists, try help!")
 	}
