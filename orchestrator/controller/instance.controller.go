@@ -45,3 +45,18 @@ func CreateInstance(c *gin.Context) {
 	response.Created(c, res)
 
 }
+
+func DeleteInstance(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	// parse body
+
+	res, err := services.DeleteInstance(uuid)
+
+	if err != nil {
+		response.InternalServerError(c, err)
+	}
+
+	// will return deleted instance uuid
+	response.NoContent(c, res)
+}
