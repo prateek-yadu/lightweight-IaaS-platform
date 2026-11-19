@@ -425,7 +425,7 @@ func DeleteInstance(instanceUUID string) (gin.H, error) {
 	// body to send in topic
 	body, err := json.Marshal(map[string]any{
 		"id":        operationId,
-		"type":      types.CreateInstnaceOperation,
+		"type":      types.DeleteInstnaceOperation,
 		"payload":   map[string]any{
 			"uuid": instanceUUID,
 		},
