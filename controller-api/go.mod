@@ -1,4 +1,4 @@
-module github.com/prateek-yadu/lightweight-IaaS-platform/controller
+module github.com/prateek-yadu/lightweight-IaaS-platform/controller-api
 
 go 1.26.6
 

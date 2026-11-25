@@ -15,7 +15,7 @@ var router = gin.Default()
 
 func getRoutes() {
 	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"project": "lightweight-IaaS-platform-conbtroller", "repository": "https://github.com/prateek-yadu/lightweight-IaaS-platform/tree/main/controller"})
+		c.JSON(http.StatusOK, gin.H{"project": "lightweight-IaaS-platform-conbtroller", "repository": "https://github.com/prateek-yadu/lightweight-IaaS-platform/tree/main/controller-api"})
 	})
 
 }
